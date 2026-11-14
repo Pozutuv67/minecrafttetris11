@@ -17,6 +17,24 @@ jobs:
           mkdir unpacked
           unzip -q MinecraftTetrisAndroid-2.zip -d unpacked
           cp -R unpacked/MinecraftTetrisAndroid/. .
+          
+      - name: Fix Java version
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("app/build.gradle.kts")
+          s = p.read_text()
+          s = s.replace(
+              "android {",
+              """android {
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }"""
+          )
+          p.write_text(s)
+          PY
+
 
       - uses: actions/setup-java@v4
         with:
